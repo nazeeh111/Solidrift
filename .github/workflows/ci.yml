@@ -1,0 +1,35 @@
+name: Contracts and portable package
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  contracts:
+    strategy:
+      matrix:
+        python: ['3.10', '3.14']
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install build tooling
+        run: python -m pip install 'setuptools>=77' wheel
+      - name: Geometry and recovery contracts
+        run: python -m unittest discover -s tests -v
+      - name: Browser source syntax
+        run: node --check solidrift/web/app.js
+      - name: Build portable wheel
+        run: python -m pip wheel --no-deps --no-build-isolation . --wheel-dir dist
+      - name: Install and exercise package away from checkout
+        run: |
+          python -m venv /tmp/solidrift-installed
+          /tmp/solidrift-installed/bin/python -m pip install --no-deps dist/*.whl
+          cd /tmp
+          /tmp/solidrift-installed/bin/python -m solidrift --version
+          /tmp/solidrift-installed/bin/python -c "from importlib.resources import files; r=files('solidrift'); assert (r/'fixtures/Offset3.obj').read_bytes(); assert (r/'fixtures/LICENSE').read_bytes(); assert '__SOLIDRIFT_DATA__' in (r/'web/index.html').read_text()"
