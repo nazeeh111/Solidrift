@@ -8,6 +8,8 @@ python -m solidrift verify /path/to/extracted/report.json
 
 That command checks stored original bytes, input conversion, operand validity, all accepted contractions, source clusters, the lifted patch, exact input undo and the paired-surface bound. It **does not rerun Blender**, authenticate the report's author or prove ideal union correctness. `demo --blender ... --out NEW_DIRECTORY` performs the fresh native search. Results can vary with Blender builds.
 
+From version 0.1.2, retained output signed integrals are recomputed using exact rational arithmetic on stored coordinates and compared with serialized native volumes at relative tolerance `1e-9`, without an absolute floor. Failure tests use the recomputed values. Intermediate per-contraction output surfaces were not retained, so those steps' output-volume observations remain recorded native claims; replay independently checks their input geometry and internally consistent predicate values, not a fresh backend query. A consistent report is not authenticated evidence of who ran Blender.
+
 ## Source and native run
 
 The unchanged fixtures come from [Manifold](https://github.com/elalish/manifold/tree/761661c15bacb6c8459d682c715de84591d51774/test/models), revision `761661c15bacb6c8459d682c715de84591d51774`. The upstream [OffsetSelfIntersect regression](https://github.com/elalish/manifold/blob/761661c15bacb6c8459d682c715de84591d51774/test/boolean_complex_test.cpp#L1541) combines them by union. Apache-2.0 license and source identities are included in the bundle and [NOTICE](../NOTICE).
