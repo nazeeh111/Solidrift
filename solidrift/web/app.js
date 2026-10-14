@@ -20,6 +20,8 @@
     }
     const a = r.repair?.accepted;
     if (a && (!Array.isArray(a.full_repaired) || a.full_repaired.length !== 2 || !a.full_repaired.every(meshOK) || !meshOK(a.full_check?.output_geometry) || !meshOK(a.full_check?.reference_geometry))) throw Error('Invalid repair geometry.');
+    if (a && (!Array.isArray(a.undo_inputs) || a.undo_inputs.length !== 2 || !a.undo_inputs.every(meshOK) || !meshOK(a.undo_signature?.geometry))) throw Error('Invalid undo geometry.');
+    if (a && (![0,1].includes(a.intervention?.side) || !Array.isArray(a.intervention.delta) || a.intervention.delta.length !== 3 || !a.intervention.delta.every(Number.isFinite) || !Array.isArray(a.cluster) || !a.cluster.every(i=>Number.isInteger(i) && i>=0 && i<inputs[a.intervention.side].vertices.length))) throw Error('Invalid patch metadata.');
     return r;
   }
   function replay(r) {
@@ -132,7 +134,7 @@
       const pts=mesh.vertices.map(project);
       mesh.faces.forEach(f=>{const pp=f.map(i=>pts[i]);const a=pp[0],b=pp[1],c=pp[2],u=b.map((v,k)=>v-a[k]),v=c.map((vv,k)=>vv-a[k]),nn=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]],normal=Math.hypot(...nn);const light=normal?Math.abs(nn[2])/normal:0;polygons.push({pp,color,wire,depth:pp.reduce((s,p)=>s+p[2],0)/3,light});});
       if(canvas.id==='input'&&stage==='witness') pts.forEach((p,index)=>picks.push({x:p[0],y:p[1],side,index,ancestry:mesh.ancestry?.[index]}));
-      const accepted=report.status==='repaired' ? report.repair?.accepted : null, ids=stage==='repaired'&&side===accepted?.intervention.side?accepted.cluster:stage==='witness'&&selected?.side===side?[selected.index]:[];
+      const accepted=report.status==='repaired' ? report.repair?.accepted : null, ids=stage==='repaired'&&side===accepted?.intervention.side?accepted.cluster:stage==='witness'&&selected&&selected.side===side?[selected.index]:[];
       for(const id of ids){if(!pts[id])continue;const p=pts[id];ctx.beginPath();ctx.arc(p[0],p[1],4,0,Math.PI*2);ctx.strokeStyle='#d46b23';ctx.lineWidth=1.7;ctx.stroke();}
     });
     polygons.sort((a,b)=>a.depth-b.depth);
