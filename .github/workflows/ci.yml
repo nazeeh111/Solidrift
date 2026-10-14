@@ -24,6 +24,8 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Browser source syntax
         run: node --check solidrift/web/app.js
+      - name: Failed-run viewer controls
+        run: node tests/viewer-status.js
       - name: Build portable wheel
         run: python -m pip wheel --no-deps --no-build-isolation . --wheel-dir dist
       - name: Install and exercise package away from checkout
