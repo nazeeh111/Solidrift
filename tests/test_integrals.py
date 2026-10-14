@@ -28,6 +28,12 @@ class StoredIntegrals(unittest.TestCase):
             bad=dict(signature);bad[field]=value
             with self.subTest(field=field),self.assertRaises(InputError):bind_signature(bad,inputs,output)
 
+    def test_signature_accepts_small_accumulation_difference_with_same_verdict(self):
+        recorded=[{'volume':1.0},{'volume':2.0}]
+        signature=failure_signature(recorded,{'volume':1.0})
+        replayed=[{'volume':1.0000000000000002},{'volume':2.0000000000000004}]
+        self.assertTrue(bind_signature(signature,replayed,{'volume':1.0000000000000002})['matches'])
+
     def test_tiny_integral_has_no_absolute_tolerance_floor(self):
         mesh=octahedron().geometry();mesh['vertices']=[[x*1e-20,y*1e-20,z*1e-20] for x,y,z in mesh['vertices']]
         mesh['volume']=check(mesh['vertices'],mesh['faces'])['volume']

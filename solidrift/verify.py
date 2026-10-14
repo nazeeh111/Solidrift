@@ -72,7 +72,16 @@ def bind_signature(stored,inputs,output):
     except OverflowError:finite=False
     require(finite and type(declared['matches']) is bool,'invalid stored signature volume/verdict')
     require(math.isclose(volume,output['volume'],rel_tol=1e-9,abs_tol=0.0),'stored signature volume differs from verified output integral')
-    require(declared==failure_signature(inputs,{'volume':volume}),'stored failure signature fields are inconsistent')
+    recorded_inputs=[]
+    for field,checked in zip(('input_a_volume','input_b_volume'),inputs):
+        recorded=declared[field]
+        try:finite=type(recorded) in (int,float) and math.isfinite(recorded)
+        except OverflowError:finite=False
+        require(finite and math.isclose(recorded,checked['volume'],rel_tol=1e-9,abs_tol=0.0),'stored signature input integral differs from replayed geometry')
+        recorded_inputs.append({'volume':recorded})
+    # The writer's floating inputs can differ slightly across Python versions.
+    # Derived mirror arithmetic must still exactly match those checked values.
+    require(declared==failure_signature(recorded_inputs,{'volume':volume}),'stored failure signature fields are inconsistent')
     require(declared['matches']==actual['matches'],'stored failure verdict differs from recomputed geometry')
     return actual
 
@@ -119,9 +128,11 @@ def verify(path):
         require(step['vertex_after']==new.vertices[min(edge)],'reduction vertex replay mismatch')
         states[side]=new
         actual_metrics=[check(x.vertices,x.faces) for x in states]
-        require([x['volume'] for x in actual_metrics]==[x['volume'] for x in step['input_metrics']],'stored per-step input volumes differ from replay')
-        sig=failure_signature(actual_metrics,{'volume':step['failure_signature']['output_volume']})
-        require(sig==step['failure_signature'] and sig['matches'],'stored per-step failure family inconsistent')
+        require(len(step['input_metrics'])==2,'stored per-step input metrics missing')
+        recorded_metrics=[x['volume'] for x in step['input_metrics']]
+        require(recorded_metrics==[step['failure_signature']['input_a_volume'],step['failure_signature']['input_b_volume']],'per-step metric/signature volumes disagree')
+        sig=bind_signature(step['failure_signature'],actual_metrics,{'volume':step['failure_signature']['output_volume']})
+        require(sig['matches'],'stored per-step failure family inconsistent')
     # JSON keys of affine weight dictionaries are strings. Normalize on both
     # sides rather than pretending JSON preserves integer map keys.
     require(normalize([s.geometry() for s in states])==normalize(d['operands']),'final reduced geometry/ancestry replay mismatch')
