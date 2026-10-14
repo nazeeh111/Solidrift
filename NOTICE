@@ -1,0 +1,14 @@
+Solidrift
+Original implementation copyright 2026 Nazeeh Abdul-Hadi.
+
+Bundled regression geometry:
+  Offset3.obj and Offset4.obj
+  Source: https://github.com/elalish/manifold/tree/761661c15bacb6c8459d682c715de84591d51774/test/models
+  Upstream license: Apache License, Version 2.0
+  The exact upstream license is retained in solidrift/fixtures/LICENSE.
+  Original fixture bytes are retained without edits.
+
+Offset3.obj Git blob: f8d8d61de1a48c6cc3834047e42cf34a13e71a10
+Offset4.obj Git blob: 570fae2ac6be58d0d6fce42cb6126271324c440d
+
+Blender is a separately installed dependency, not bundled or relicensed here.
