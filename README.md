@@ -4,9 +4,9 @@
 
 [Explore the native case](https://nazeeh111.github.io/Solidrift/) · [Methods and evidence](docs/EVIDENCE.md) · [Download](https://github.com/nazeeh111/Solidrift/releases)
 
-[![Watch the 17-second Solidrift geometry tour](docs/media/solidrift-tour.jpg)](https://nazeeh111.github.io/Solidrift/tour.html)
+[![Watch the 19-second Solidrift geometry tour](docs/media/solidrift-tour.jpg)](https://nazeeh111.github.io/Solidrift/tour.html)
 
-[Watch the 17-second tour](https://nazeeh111.github.io/Solidrift/tour.html) of the recorded Original → Witness → Repair → Undo investigation. The included Manifold demo operands are Apache-2.0; the video preserves the attribution on screen. The stage sounds are CC0 interface effects.
+[Watch the 19-second tour](https://nazeeh111.github.io/Solidrift/tour.html) of the recorded Original → Reduction → Witness → Repair → Undo investigation. The reduction sequence samples stored input states, and only stored native output surfaces are shown. The included Manifold demo operands are Apache-2.0; attribution stays on screen. [Editable tour source](tools/tour/README.md).
 
 A union operation quietly drops part of a model. Sending the original geometry is easy. Finding the geometry that actually keeps the failure alive is harder.
 
