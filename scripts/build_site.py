@@ -27,6 +27,7 @@ def main():
     for name in ('index.html','style.css','app.js'):
         shutil.copyfile(ROOT/'solidrift/web'/name, args.out/name)
     shutil.copyfile(ROOT/'site/tour.html', args.out/'tour.html')
+    shutil.copyfile(ROOT/'site/favicon.svg', args.out/'favicon.svg')
     media = args.out/'media'; media.mkdir()
     for name in ('solidrift-tour.mp4', 'solidrift-tour.jpg'):
         shutil.copyfile(ROOT/'docs/media'/name, media/name)
