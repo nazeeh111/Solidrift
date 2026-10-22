@@ -26,6 +26,10 @@ def main():
     args.out.mkdir(parents=True)
     for name in ('index.html','style.css','app.js'):
         shutil.copyfile(ROOT/'solidrift/web'/name, args.out/name)
+    shutil.copyfile(ROOT/'site/tour.html', args.out/'tour.html')
+    media = args.out/'media'; media.mkdir()
+    for name in ('solidrift-tour.mp4', 'solidrift-tour.jpg'):
+        shutil.copyfile(ROOT/'docs/media'/name, media/name)
     demo = args.out/'demo';demo.mkdir()
     data = (json.dumps(report, indent=2, allow_nan=False)+'\n').encode()
     (demo/'report.json').write_bytes(data)

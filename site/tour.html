@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="A 17-second tour of Solidrift's recorded Original, Witness, Repair and Undo geometry investigation.">
+<title>Solidrift · Four stages of a geometry failure</title>
+<link rel="stylesheet" href="./style.css">
+<style>
+.tour{padding:55px 0 70px}
+.tour .eyebrow{margin:0 0 16px}
+.tour h1{font-size:clamp(38px,5vw,68px);margin:0 0 18px}
+.tour .lead{max-width:800px;margin-bottom:30px}
+.player{max-width:1196px;border:1px solid var(--line);background:#e8eee8}
+.player video{display:block;width:100%;height:auto;aspect-ratio:16/9}
+.stages{list-style:none;padding:0;margin:28px 0 26px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stages li{border-top:2px solid var(--line);padding-top:12px;font-size:13px;color:var(--muted)}
+.stages b{display:block;color:var(--ink);font-size:15px;margin-bottom:4px}
+.stages span{font:11px ui-monospace,monospace;color:var(--blue);margin-right:7px}
+.tour-actions{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.tour-actions a{display:inline-block;padding:12px 17px;border:1px solid var(--blue);background:var(--blue);color:#fff;text-decoration:none;font-size:13px;font-weight:600}
+.tour-actions a.secondary{background:transparent;color:var(--ink);border-color:var(--line)}
+.tour .note{font-size:12px;color:var(--muted);max-width:880px;margin-top:28px}
+@media(max-width:760px){.tour{padding:36px 0 46px}.stages{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<header><a class="brand" href="./index.html"><svg viewBox="0 0 30 30" aria-hidden="true"><path d="M15 2 28 9 28 22 15 29 2 22 2 9Z M2 9 15 16 28 9 M15 16V29 M15 2V16"/></svg>Solidrift<span>GEOMETRY FAILURE MICROSCOPE</span></a><nav><a href="./index.html">Interactive case ↗</a><a href="https://github.com/nazeeh111/Solidrift">Source ↗</a></nav></header>
+<main><section class="tour">
+<p class="eyebrow">A SMALLER BUG. THE SAME FAILURE.</p>
+<h1>The shape of a bug,<br>in 17 seconds.</h1>
+<p class="lead">A recorded Blender Boolean loses part of a model. Watch the investigation move from the original failure to a 12-triangle witness, a checked full-model intervention, and an exact undo.</p>
+<div class="player"><video controls playsinline preload="metadata" poster="./media/solidrift-tour.jpg" aria-label="Solidrift Original, Witness, Repair and Undo tour"><source src="./media/solidrift-tour.mp4" type="video/mp4">Your browser cannot play this video. <a href="./media/solidrift-tour.mp4">Download the MP4.</a></video></div>
+<ol class="stages"><li><b><span>01</span>Original</b>One operand disappears from the FLOAT result.</li><li><b><span>02</span>Witness</b>The same omission survives at 12 triangles.</li><li><b><span>03</span>Repair</b>A 13-vertex full-model change passes the recorded comparison.</li><li><b><span>04</span>Undo</b>Original inputs and the failed surface return.</li></ol>
+<div class="tour-actions"><a href="./index.html">Explore the interactive case ↗</a><a class="secondary" href="https://github.com/nazeeh111/Solidrift/blob/main/docs/EVIDENCE.md">Read methods and limits ↗</a></div>
+<p class="note">The video shows recorded native output; analysis runs locally in Blender, not in this page. Demo operands come from the Manifold project under Apache-2.0. See the repository <a href="https://github.com/nazeeh111/Solidrift/blob/main/NOTICE">NOTICE</a>. Stage sounds are CC0 interface effects.</p>
+</section></main>
+<footer><span>Solidrift · Inspectable geometry, inspectable claims.</span><span>Demo operands: Manifold project · Apache-2.0</span></footer>
+</body>
+</html>
