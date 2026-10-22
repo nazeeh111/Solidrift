@@ -4,6 +4,15 @@
   const $ = id => document.getElementById(id), cap = 10 * 1024 * 1024;
   let report, states = [], stage = 'original', selected = null;
   const camera = {yaw:.55, pitch:-.30, zoom:1}, canvases = [$('input'), $('output')];
+  // Lead with the observed failure on narrow screens; keep DOM focus order visual.
+  if (typeof window.matchMedia === 'function') {
+    const narrow = window.matchMedia('(max-width: 760px)');
+    const panes = document.querySelector('.canvases');
+    const inputFigure = $('input').closest('figure'), outputFigure = $('output').closest('figure');
+    const orderPanes = () => panes.prepend(narrow.matches ? outputFigure : inputFigure);
+    narrow.addEventListener('change', () => { orderPanes(); if (report) draw(); });
+    orderPanes();
+  }
   let center = [0,0,0], span = 1, picks = [];
   const clone = value => JSON.parse(JSON.stringify(value));
   const meshOK = m => m && Array.isArray(m.vertices) && m.vertices.length > 0 && m.vertices.length <= 5000 &&
@@ -58,6 +67,18 @@
     report = candidate; states = candidateStates; selected = null; stage = 'original';
     $('error').hidden = true;
     const original = Object.values(report.baseline.inputs), points=original.flatMap(m=>m.vertices);
+    const originalTriangles=original.reduce((sum,m)=>sum+m.faces.length,0);
+    const witnessTriangles=report.reduction?.operands?.reduce((sum,m)=>sum+m.faces.length,0);
+    const failureRecorded=['repaired','witness'].includes(report.status) && !!witnessTriangles;
+    const hasRepair=report.status==='repaired' && !!report.repair?.accepted;
+    text('case-eyebrow',failureRecorded?'RECORDED CASE / BOOLEAN OMISSION':report.status==='no_failure'?'RECORDED CASE / NO TARGET OMISSION':'RECORDED CASE / INCOMPLETE RUN');
+    text('case-headline',failureRecorded?'The failure survives the cut.':report.status==='no_failure'?'No target omission found.':'Inspect the partial evidence.');
+    text('case-ratio',failureRecorded && witnessTriangles<originalTriangles ? `${originalTriangles} → ${witnessTriangles} TRI` : `${originalTriangles} TRI`);
+    text('case-lead',failureRecorded && witnessTriangles<originalTriangles
+      ? hasRepair?`${originalTriangles} triangles become a valid ${witnessTriangles}-triangle witness. Inspect the missing operand, the full-model intervention and exact input undo.`
+        :`${originalTriangles} triangles become a ${witnessTriangles}-triangle witness. Inspect the recorded omission; no accepted full-model repair or undo is claimed.`
+      :report.status==='no_failure'?'The recorded baseline did not show this detector’s omission family. Inspect the inputs and native outputs; no witness or repair is claimed.'
+      :'The native run did not finish with a supported result. Inspect the stored baseline and status; no witness or repair is claimed.');
     const lo=[0,1,2].map(k=>Math.min(...points.map(p=>p[k]))), hi=[0,1,2].map(k=>Math.max(...points.map(p=>p[k])));
     center=lo.map((x,k)=>(x+hi[k])/2); span=Math.max(...lo.map((x,k)=>hi[k]-x),1e-9);
     text('receipt-title', ['repaired','witness','no_failure'].includes(report.status) ? 'Recorded native run' : `Incomplete native run: ${report.status || 'unknown'}`);
@@ -95,23 +116,24 @@
   }
   function update() {
     if (!report) return;
+    document.querySelector('.workbench').dataset.stage=stage;
     document.querySelectorAll('[data-stage]').forEach(b=>{b.classList.toggle('active',b.dataset.stage===stage);b.setAttribute('aria-pressed',b.dataset.stage===stage);});
     const pair=activePair(), n=pair.reduce((s,m)=>s+m.faces.length,0), original=Object.values(report.baseline.inputs).reduce((s,m)=>s+m.faces.length,0);
     text('triangles',n); text('triangle-detail',`${pair[0].faces.length} in A + ${pair[1].faces.length} in B`);
     const end=Number($('step').value), trace=report.reduction?.accepted_steps;
     text('input-title',stage==='witness'?`Witness · state ${end}`:stage==='repaired'?'Repaired operands':stage==='undo'?'Restored operands':'Original operands');
-    text('output-title',stage==='undo'?'FLOAT union · failure restored':'FLOAT union');
-    text('fault',stage==='repaired'?'Comparison accepted':stage==='witness'&&end<states.length-1?'Recorded omission test':report.reduction?'Operand B omitted':'See recorded baseline');
-    $('fault').style.color=stage==='repaired'?'var(--teal)':'var(--orange)';
+    text('output-title',stage==='undo'?'FLOAT / B absent again':stage==='repaired'?'FLOAT / comparison accepted':stage==='witness'&&end<states.length-1?'Native output / not stored':stage==='witness'?'FLOAT / witness omission':report.status==='no_failure'?'FLOAT / recorded output':report.reduction?'FLOAT / B absent':'FLOAT / baseline output');
+    text('fault',stage==='repaired'?'Comparison accepted':stage==='witness'&&end<states.length-1?'Recorded omission test':report.status==='no_failure'?'No target omission':report.reduction?'Operand B omitted':'Incomplete native run');
+    $('fault').style.color=stage==='repaired'||report.status==='no_failure'?'var(--teal)':report.reduction?'var(--failure)':'var(--muted)';
     text('fault-detail',stage==='repaired'?'Valid exports + volume + paired surface bound':stage==='witness'&&end<states.length-1?'Native query passed in the stored trace':'Stored native output, not a browser simulation');
     text('third-label',stage==='repaired'?'FULL-MODEL PATCH':'REDUCTION');
-    text('third',stage==='repaired'?`${report.repair.accepted.cluster.length} vertices`:`${original} → ${report.reduction?.operands.reduce((s,m)=>s+m.faces.length,0) ?? original}`);
+    text('third',stage==='repaired'?`${report.repair.accepted.cluster.length} vertices`:report.reduction&&report.status!=='no_failure'?`${original} → ${report.reduction.operands.reduce((s,m)=>s+m.faces.length,0)}`:'—');
     const bound=report.repair?.accepted?.full_check?.surface_correspondence?.whole_paired_surface_distance_upper_bound ?? report.repair?.accepted?.full_check?.correspondence?.distance_bound;
-    text('third-detail',stage==='repaired'?(bound?`Paired surface separation ≤ ${format(bound)}`:'Paired exported surfaces checked in native run'):'Valid inputs; same declared omission family');
+    text('third-detail',stage==='repaired'?(bound?`Paired surface separation ≤ ${format(bound)}`:'Paired exported surfaces checked in native run'):report.reduction&&report.status!=='no_failure'?'Valid inputs; same declared omission family':'No failure-preserving reduction in this report');
     const s=end?trace?.[end-1]:null;
     text('step-detail',s?`Step ${end} · operand ${s.operand===0?'A':'B'} · edge ${s.edge.join(' ↔ ')} · ${s.choice} · query ${s.native_query}`:'State 0 · original imported operands');
     text('input-note',stage==='witness'?'Drag to orbit · click a vertex for ancestry':'Drag to orbit · scroll to zoom · R to reset');
-    text('output-note',stage==='witness'&&end<states.length-1?'Intermediate output surfaces were not stored. Final witness output is available at the last state.':'Orange wire shows the MANIFOLD comparison surface');
+    text('output-note',stage==='witness'&&end<states.length-1?'Intermediate output surfaces were not stored. Final witness output is available at the last state.':'Pale wire shows the MANIFOLD comparison surface; inspect the input operands in the other view.');
     draw();
   }
   function transform(p) {
@@ -124,25 +146,28 @@
     const box=canvas.getBoundingClientRect(),w=box.width,h=box.height,dpr=Math.min(devicePixelRatio||1,2);
     canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
     const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);
-    const scale=Math.min(w*.82,h*.78)*camera.zoom, project=p=>{const q=transform(p);return [w/2+q[0]*scale,h/2-q[1]*scale,q[2]];};
-    ctx.strokeStyle='#dbe4df';ctx.lineWidth=.6;
+    const scale=Math.min(w*.96,h*.94)*camera.zoom, project=p=>{const q=transform(p);return [w/2+q[0]*scale,h/2-q[1]*scale,q[2]];};
+    ctx.strokeStyle='#263a4b';ctx.lineWidth=.6;
     for(let i=-5;i<=5;i++){const q=i/10;for(const ps of [[[-.5,-.55,q],[.5,-.55,q]],[[q,-.55,-.5],[q,-.55,.5]]]){const pts=ps.map(p=>project(p.map((x,k)=>x*span+center[k])));ctx.beginPath();ctx.moveTo(...pts[0].slice(0,2));ctx.lineTo(...pts[1].slice(0,2));ctx.stroke();}}
-    if (!meshes) {ctx.fillStyle='#52666c';ctx.textAlign='center';ctx.font='12px ui-monospace,monospace';ctx.fillText('No stored output for this state',w/2,h/2);return;}
-    const polygons=[];
+    if (!meshes) {ctx.fillStyle='#a6b9c7';ctx.textAlign='center';ctx.font='12px ui-monospace,monospace';ctx.fillText('No stored output for this state',w/2,h/2);return;}
+    const polygons=[],rings=[];
     meshes.forEach(({mesh,color,wire,side})=>{
       if(!meshOK(mesh))return;
       const pts=mesh.vertices.map(project);
       mesh.faces.forEach(f=>{const pp=f.map(i=>pts[i]);const a=pp[0],b=pp[1],c=pp[2],u=b.map((v,k)=>v-a[k]),v=c.map((vv,k)=>vv-a[k]),nn=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]],normal=Math.hypot(...nn);const light=normal?Math.abs(nn[2])/normal:0;polygons.push({pp,color,wire,depth:pp.reduce((s,p)=>s+p[2],0)/3,light});});
       if(canvas.id==='input'&&stage==='witness') pts.forEach((p,index)=>picks.push({x:p[0],y:p[1],side,index,ancestry:mesh.ancestry?.[index]}));
-      const accepted=report.status==='repaired' ? report.repair?.accepted : null, ids=stage==='repaired'&&side===accepted?.intervention.side?accepted.cluster:stage==='witness'&&selected&&selected.side===side?[selected.index]:[];
-      for(const id of ids){if(!pts[id])continue;const p=pts[id];ctx.beginPath();ctx.arc(p[0],p[1],4,0,Math.PI*2);ctx.strokeStyle='#d46b23';ctx.lineWidth=1.7;ctx.stroke();}
+      const accepted=report.status==='repaired' ? report.repair?.accepted : null;
+      const ids=canvas.id==='input' && stage==='repaired' && side===accepted?.intervention.side ? accepted.cluster
+        :canvas.id==='input' && stage==='witness' && selected && selected.side===side ? [selected.index] : [];
+      for(const id of ids){if(pts[id])rings.push(pts[id]);}
     });
     polygons.sort((a,b)=>a.depth-b.depth);
     for(const p of polygons){ctx.beginPath();p.pp.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]));ctx.closePath();if(!p.wire){ctx.globalAlpha=.21+.32*p.light;ctx.fillStyle=p.color;ctx.fill();}ctx.globalAlpha=p.wire?.58:.65;ctx.strokeStyle=p.color;ctx.lineWidth=p.wire?.7:.8;ctx.stroke();}ctx.globalAlpha=1;
-    // Markers must be painted after triangles to remain visible.
-    if(canvas.id==='input'&&stage==='witness'){for(const p of picks){ctx.beginPath();ctx.arc(p.x,p.y,2.2,0,Math.PI*2);ctx.fillStyle=p.side?'#2456dc':'#0b947d';ctx.fill();}}
+    // Markers belong to input vertices and must be painted after triangles.
+    for(const p of rings){ctx.beginPath();ctx.arc(p[0],p[1],4.5,0,Math.PI*2);ctx.strokeStyle='#e6f58a';ctx.lineWidth=1.8;ctx.stroke();}
+    if(canvas.id==='input'&&stage==='witness'){for(const p of picks){ctx.beginPath();ctx.arc(p.x,p.y,2.2,0,Math.PI*2);ctx.fillStyle=p.side?'#93b9ff':'#5de4d0';ctx.fill();}}
   }
-  function draw(){if(!report)return;picks=[];render($('input'),activePair().map((mesh,side)=>({mesh,side,color:side?'#2456dc':'#0b947d'})));const o=outputPair();render($('output'),o?[{mesh:o.FLOAT,color:'#2456dc',side:0},...($('reference').checked&&meshOK(o.MANIFOLD)?[{mesh:o.MANIFOLD,color:'#d46b23',wire:true}]:[])]:null);}
+  function draw(){if(!report)return;picks=[];render($('input'),activePair().map((mesh,side)=>({mesh,side,color:side?'#93b9ff':'#5de4d0'})));const o=outputPair();render($('output'),o?[{mesh:o.FLOAT,color:'#93b9ff',side:0},...($('reference').checked&&meshOK(o.MANIFOLD)?[{mesh:o.MANIFOLD,color:'#e6f58a',wire:true}]:[])]:null);}
   for(const canvas of canvases){let drag=null;
     canvas.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY};canvas.setPointerCapture(e.pointerId);});
     canvas.addEventListener('pointermove',e=>{if(!drag)return;camera.yaw+=(e.clientX-drag.x)*.008;camera.pitch=Math.max(-1.45,Math.min(1.45,camera.pitch+(e.clientY-drag.y)*.008));drag.x=e.clientX;drag.y=e.clientY;draw();});
