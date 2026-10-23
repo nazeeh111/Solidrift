@@ -4,15 +4,7 @@
   const $ = id => document.getElementById(id), cap = 10 * 1024 * 1024;
   let report, states = [], stage = 'original', selected = null;
   const camera = {yaw:.55, pitch:-.30, zoom:1}, canvases = [$('input'), $('output')];
-  // Lead with the observed failure on narrow screens; keep DOM focus order visual.
-  if (typeof window.matchMedia === 'function') {
-    const narrow = window.matchMedia('(max-width: 760px)');
-    const panes = document.querySelector('.canvases');
-    const inputFigure = $('input').closest('figure'), outputFigure = $('output').closest('figure');
-    const orderPanes = () => panes.prepend(narrow.matches ? outputFigure : inputFigure);
-    narrow.addEventListener('change', () => { orderPanes(); if (report) draw(); });
-    orderPanes();
-  }
+  // Keep inputs before the observed output at every width, including focus order.
   let center = [0,0,0], span = 1, picks = [];
   const clone = value => JSON.parse(JSON.stringify(value));
   const meshOK = m => m && Array.isArray(m.vertices) && m.vertices.length > 0 && m.vertices.length <= 5000 &&
@@ -62,6 +54,7 @@
   }
   function text(id,value) { $(id).textContent = value ?? ''; }
   function format(value) { return Number.isFinite(value) ? value.toPrecision(5) : 'unavailable'; }
+  function completedReduction() { return ['repaired','witness'].includes(report?.status) && states.length > 0; }
   function load(r) {
     const candidate = validate(r), candidateStates = replay(candidate);
     report = candidate; states = candidateStates; selected = null; stage = 'original';
@@ -69,14 +62,14 @@
     const original = Object.values(report.baseline.inputs), points=original.flatMap(m=>m.vertices);
     const originalTriangles=original.reduce((sum,m)=>sum+m.faces.length,0);
     const witnessTriangles=report.reduction?.operands?.reduce((sum,m)=>sum+m.faces.length,0);
-    const failureRecorded=['repaired','witness'].includes(report.status) && !!witnessTriangles;
+    const failureRecorded=completedReduction();
     const hasRepair=report.status==='repaired' && !!report.repair?.accepted;
-    text('case-eyebrow',failureRecorded?'RECORDED CASE / BOOLEAN OMISSION':report.status==='no_failure'?'RECORDED CASE / NO TARGET OMISSION':'RECORDED CASE / INCOMPLETE RUN');
+    text('case-eyebrow',failureRecorded?'RECORDED CASE / MISSING SOLID':report.status==='no_failure'?'RECORDED CASE / NO TARGET OMISSION':'RECORDED CASE / INCOMPLETE RUN');
     text('case-headline',failureRecorded?'The failure survives the cut.':report.status==='no_failure'?'No target omission found.':'Inspect the partial evidence.');
+    text('case-orientation',failureRecorded?'A union should combine both solids. In this recorded run, Blender’s FLOAT solver returns A and drops B.':'A union should combine both input solids. Compare the inputs with the solver’s recorded output.');
     text('case-ratio',failureRecorded && witnessTriangles<originalTriangles ? `${originalTriangles} → ${witnessTriangles} TRI` : `${originalTriangles} TRI`);
-    text('case-lead',failureRecorded && witnessTriangles<originalTriangles
-      ? hasRepair?`${originalTriangles} triangles become a valid ${witnessTriangles}-triangle witness. Inspect the missing operand, the full-model intervention and exact input undo.`
-        :`${originalTriangles} triangles become a ${witnessTriangles}-triangle witness. Inspect the recorded omission; no accepted full-model repair or undo is claimed.`
+    text('case-lead',failureRecorded
+      ? `${witnessTriangles<originalTriangles?`${originalTriangles} input triangles become a ${witnessTriangles}-triangle witness: a smaller input that keeps the same failure.`:`The recorded witness has ${witnessTriangles} triangles and retains the failure.`} Open Witness to inspect it.${hasRepair?' Repair and Undo show the tested geometry change and its reversal.':''}`
       :report.status==='no_failure'?'The recorded baseline did not show this detector’s omission family. Inspect the inputs and native outputs; no witness or repair is claimed.'
       :'The native run did not finish with a supported result. Inspect the stored baseline and status; no witness or repair is claimed.');
     const lo=[0,1,2].map(k=>Math.min(...points.map(p=>p[k]))), hi=[0,1,2].map(k=>Math.max(...points.map(p=>p[k])));
@@ -85,9 +78,11 @@
     text('receipt-detail', ['repaired','witness','no_failure'].includes(report.status) ? 'Actual exported geometry. Orbit either view to inspect the omission, reduction, intervention and undo.' : 'Partial evidence only. Repair and undo are disabled because this run did not finish successfully.');
     text('backend', `${report.baseline.backend || 'Blender'} · ${report.baseline.build_hash || 'build not recorded'}`);
     const n=states.length ? states.length-1 : 0; $('step').max=n; $('step').value=n;
-    $('step').disabled=!n; $('trace-view').disabled=!n; text('step-count', `${n} accepted contractions`);
+    $('step').disabled=!n; $('trace-view').disabled=!n; text('step-count', `${n} ${failureRecorded||report.status==='no_failure'?'accepted':'stored'} contractions`);
     const accepted=report.status==='repaired' ? report.repair?.accepted : null;
-    document.querySelector('[data-stage="witness"]').disabled=!states.length;
+    const witnessButton=document.querySelector('[data-stage="witness"]');
+    witnessButton.disabled=!states.length;
+    witnessButton.lastChild.textContent=failureRecorded||!states.length?' Witness':' Partial';
     for (const name of ['repaired','undo']) document.querySelector(`[data-stage="${name}"]`).disabled=!accepted;
     $('patch-vertices').replaceChildren();
     if (accepted) {
@@ -99,7 +94,7 @@
       text('patch-description', 'No accepted full-model patch in this report. A rejected or unsupported repair is never displayed as a success.'); text('patch-bound','');
     }
     $('evidence-link').hidden = !report.demo;
-    text('selection','Click a witness vertex to inspect its source cluster.');
+    text('selection',failureRecorded||!states.length?'Choose Witness to inspect a vertex and its source cluster.':'Choose Partial to inspect a stored vertex and its source cluster.');
     camera.yaw=.55; camera.pitch=-.30; camera.zoom=1; update();
   }
   function activePair() {
@@ -120,20 +115,42 @@
     document.querySelectorAll('[data-stage]').forEach(b=>{b.classList.toggle('active',b.dataset.stage===stage);b.setAttribute('aria-pressed',b.dataset.stage===stage);});
     const pair=activePair(), n=pair.reduce((s,m)=>s+m.faces.length,0), original=Object.values(report.baseline.inputs).reduce((s,m)=>s+m.faces.length,0);
     text('triangles',n); text('triangle-detail',`${pair[0].faces.length} in A + ${pair[1].faces.length} in B`);
-    const end=Number($('step').value), trace=report.reduction?.accepted_steps;
-    text('input-title',stage==='witness'?`Witness · state ${end}`:stage==='repaired'?'Repaired operands':stage==='undo'?'Restored operands':'Original operands');
-    text('output-title',stage==='undo'?'FLOAT / B absent again':stage==='repaired'?'FLOAT / comparison accepted':stage==='witness'&&end<states.length-1?'Native output / not stored':stage==='witness'?'FLOAT / witness omission':report.status==='no_failure'?'FLOAT / recorded output':report.reduction?'FLOAT / B absent':'FLOAT / baseline output');
-    text('fault',stage==='repaired'?'Comparison accepted':stage==='witness'&&end<states.length-1?'Recorded omission test':report.status==='no_failure'?'No target omission':report.reduction?'Operand B omitted':'Incomplete native run');
-    $('fault').style.color=stage==='repaired'||report.status==='no_failure'?'var(--teal)':report.reduction?'var(--failure)':'var(--muted)';
-    text('fault-detail',stage==='repaired'?'Valid exports + volume + paired surface bound':stage==='witness'&&end<states.length-1?'Native query passed in the stored trace':'Stored native output, not a browser simulation');
-    text('third-label',stage==='repaired'?'FULL-MODEL PATCH':'REDUCTION');
+    const end=Number($('step').value), trace=report.reduction?.accepted_steps, complete=completedReduction();
+    const partial=!complete && report.status!=='no_failure';
+    text('input-title',stage==='witness'?`${complete?'Witness':'Stored'} inputs · state ${end}`:stage==='repaired'?'Repaired input solids':stage==='undo'?'Restored input solids':partial?'Recorded input solids / A + B':'Input solids / A + B');
+    text('output-title',stage==='undo'?'Observed / B missing again':stage==='repaired'?'Observed / comparison accepted':stage==='witness'&&(end<states.length-1||!outputPair())?'Native output / not stored':stage==='witness'?complete?'Observed / same missing solid':'Native output / partial record':report.status==='no_failure'?'FLOAT / recorded output':complete?'Observed / B missing (FLOAT)':'FLOAT / partial baseline output');
+    text('fault',stage==='repaired'?'Comparison accepted':partial?'Incomplete native run':stage==='witness'&&end<states.length-1?'Recorded omission test':report.status==='no_failure'?'No target omission':complete?'Operand B omitted':'Incomplete native run');
+    $('fault').style.color=stage==='repaired'||report.status==='no_failure'?'var(--teal)':complete?'var(--failure)':'var(--muted)';
+    text('fault-detail',stage==='repaired'?'Valid exports + volume + paired surface bound':partial?'Stored native geometry; completion not established.':stage==='witness'&&end<states.length-1?'Native query passed in the stored trace':'Stored native output, not a browser simulation');
+    text('third-label',stage==='repaired'?'FULL-MODEL PATCH':partial?'STORED INPUT COUNTS':'REDUCTION');
     text('third',stage==='repaired'?`${report.repair.accepted.cluster.length} vertices`:report.reduction&&report.status!=='no_failure'?`${original} → ${report.reduction.operands.reduce((s,m)=>s+m.faces.length,0)}`:'—');
     const bound=report.repair?.accepted?.full_check?.surface_correspondence?.whole_paired_surface_distance_upper_bound ?? report.repair?.accepted?.full_check?.correspondence?.distance_bound;
-    text('third-detail',stage==='repaired'?(bound?`Paired surface separation ≤ ${format(bound)}`:'Paired exported surfaces checked in native run'):report.reduction&&report.status!=='no_failure'?'Valid inputs; same declared omission family':'No failure-preserving reduction in this report');
+    text('third-detail',stage==='repaired'?(bound?`Paired surface separation ≤ ${format(bound)}`:'Paired exported surfaces checked in native run'):partial?'Recorded geometry only; no completed reduction is claimed.':complete?'Valid inputs; same declared omission family':'No failure-preserving reduction in this report');
     const s=end?trace?.[end-1]:null;
     text('step-detail',s?`Step ${end} · operand ${s.operand===0?'A':'B'} · edge ${s.edge.join(' ↔ ')} · ${s.choice} · query ${s.native_query}`:'State 0 · original imported operands');
-    text('input-note',stage==='witness'?'Drag to orbit · click a vertex for ancestry':'Drag to orbit · scroll to zoom · R to reset');
-    text('output-note',stage==='witness'&&end<states.length-1?'Intermediate output surfaces were not stored. Final witness output is available at the last state.':'Pale wire shows the MANIFOLD comparison surface; inspect the input operands in the other view.');
+    text('input-note',stage==='witness'?'Click a vertex or use the ancestry controls below':'Drag to orbit · scroll to zoom · R to reset');
+    text('output-note',stage==='witness'&&end<states.length-1?complete?'Intermediate output surfaces were not stored. Final witness output is available at the last state.':'Intermediate output surfaces were not stored. Any recorded final output is shown at the last state.':'Pale wire shows the MANIFOLD comparison surface; inspect the input operands in the other view.');
+    $('vertex-inspector').hidden=stage!=='witness';
+    if(stage==='witness')inspectVertex(selected?.side ?? 0,selected?.index ?? 0);
+    else {text('selection',complete||!states.length?'Choose Witness to inspect a vertex and its source cluster.':'Choose Partial to inspect a stored vertex and its source cluster.');draw();}
+  }
+  function inspectVertex(side,index) {
+    if(stage!=='witness')return;
+    const mesh=activePair()[side];
+    $('vertex-side').value=String(side);
+    $('vertex-index').max=String(mesh.vertices.length-1);
+    text('vertex-range',`0–${mesh.vertices.length-1} in operand ${side?'B':'A'}`);
+    if(!Number.isInteger(index)||index<0||index>=mesh.vertices.length){
+      selected=null;
+      $('vertex-index').setAttribute('aria-invalid','true');
+      text('selection',`Enter a whole vertex index from 0 to ${mesh.vertices.length-1}.`);
+      draw();return;
+    }
+    $('vertex-index').setAttribute('aria-invalid','false');
+    $('vertex-index').value=String(index);
+    selected={side,index};
+    const cluster=mesh.ancestry?.[index]?.cluster;
+    text('selection',`Operand ${side?'B':'A'} v${index} consumes original source indices: ${cluster?.join(', ') ?? 'not recorded'}. Clusters track contractions; they are not exact affine coordinates after native rounding.`);
     draw();
   }
   function transform(p) {
@@ -171,7 +188,7 @@
   for(const canvas of canvases){let drag=null;
     canvas.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY};canvas.setPointerCapture(e.pointerId);});
     canvas.addEventListener('pointermove',e=>{if(!drag)return;camera.yaw+=(e.clientX-drag.x)*.008;camera.pitch=Math.max(-1.45,Math.min(1.45,camera.pitch+(e.clientY-drag.y)*.008));drag.x=e.clientX;drag.y=e.clientY;draw();});
-    canvas.addEventListener('pointerup',e=>{if(drag&&canvas.id==='input'&&stage==='witness'&&Math.hypot(e.clientX-drag.startX,e.clientY-drag.startY)<4){const b=canvas.getBoundingClientRect(),x=e.clientX-b.left,y=e.clientY-b.top;const hit=picks.map(p=>({...p,d:Math.hypot(p.x-x,p.y-y)})).filter(p=>p.d<12).sort((a,b)=>a.d-b.d)[0];if(hit){selected=hit;text('selection',`Operand ${hit.side?'B':'A'} v${hit.index} consumes original source indices: ${hit.ancestry?.cluster?.join(', ') ?? 'not recorded'}. Clusters track contractions; they are not exact affine coordinates after native rounding.`);draw();}}drag=null;});
+    canvas.addEventListener('pointerup',e=>{if(drag&&canvas.id==='input'&&stage==='witness'&&Math.hypot(e.clientX-drag.startX,e.clientY-drag.startY)<4){const b=canvas.getBoundingClientRect(),x=e.clientX-b.left,y=e.clientY-b.top;const hit=picks.map(p=>({...p,d:Math.hypot(p.x-x,p.y-y)})).filter(p=>p.d<12).sort((a,b)=>a.d-b.d)[0];if(hit)inspectVertex(hit.side,hit.index);}drag=null;});
     canvas.addEventListener('pointercancel',()=>{drag=null;});
     canvas.addEventListener('wheel',e=>{e.preventDefault();camera.zoom=Math.max(.3,Math.min(4,camera.zoom*Math.exp(-e.deltaY*.001)));draw();},{passive:false});
     canvas.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','r','R'].includes(e.key)){e.preventDefault();if(e.key==='ArrowLeft')camera.yaw-=.1;if(e.key==='ArrowRight')camera.yaw+=.1;if(e.key==='ArrowUp')camera.pitch-=.1;if(e.key==='ArrowDown')camera.pitch+=.1;if(e.key.toLowerCase()==='r'){camera.yaw=.55;camera.pitch=-.30;camera.zoom=1;}draw();}});
@@ -180,6 +197,8 @@
   $('step').addEventListener('input',()=>{if(stage==='witness'){selected=null;update();}else{const n=Number($('step').value),s=report?.reduction?.accepted_steps[n-1];text('step-detail',s?`Step ${n} · operand ${s.operand===0?'A':'B'} · edge ${s.edge.join(' ↔ ')} · ${s.choice}`:'State 0 · original imported operands');}});
   $('trace-view').addEventListener('click',()=>{stage='witness';selected=null;update();});
   $('reference').addEventListener('change',draw);window.addEventListener('resize',draw);
+  $('vertex-side').addEventListener('change',()=>inspectVertex(Number($('vertex-side').value),0));
+  $('vertex-index').addEventListener('input',()=>inspectVertex(Number($('vertex-side').value),$('vertex-index').value===''?NaN:Number($('vertex-index').value)));
   function download(name,contents,type='application/json'){const url=URL.createObjectURL(new Blob([contents],{type})),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
   $('download-json').addEventListener('click',()=>{if(report)download('solidrift-report.json',JSON.stringify(report,null,2)+'\n');});
   $('download-input').addEventListener('click',()=>{if(!report)return;activePair().forEach((m,i)=>download(`solidrift-${stage}-${i?'B':'A'}.obj`,'# Solidrift displayed geometry; native binary32 coordinates\n'+m.vertices.map(v=>'v '+v.join(' ')).join('\n')+'\n'+m.faces.map(f=>'f '+f.map(i=>i+1).join(' ')).join('\n')+'\n','text/plain'));});
