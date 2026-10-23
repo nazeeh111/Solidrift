@@ -4,18 +4,29 @@ const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),asse
 const source=fs.readFileSync(path.join(__dirname,'../solidrift/web/app.js'),'utf8');
 const mesh={name:'test',vertices:[[0,0,0],[1,0,0],[0,1,0],[0,0,1]],faces:[[0,2,1],[0,1,3],[0,3,2],[1,2,3]],ancestry:[0,1,2,3].map(i=>({cluster:[i],weights:{[i]:1}}))};
 const report={schema_version:1,baseline:{inputs:{A:mesh,B:mesh},outputs:{FLOAT:mesh,MANIFOLD:mesh}},reduction:{original_operands:[mesh,mesh],operands:[mesh,mesh],accepted_steps:[],final_outputs:{FLOAT:mesh,MANIFOLD:mesh}},repair:{accepted:{full_repaired:[mesh,mesh],undo_inputs:[mesh,mesh],undo_signature:{geometry:mesh},full_check:{output_geometry:mesh,reference_geometry:mesh},intervention:{side:0,vertices:[0,1,2],delta:[0,0,0]},cluster:[0,1,2]}}};
-for(const status of ['repaired','error','timeout','cancelled','running','witness','no_failure']){
- const r=structuredClone(report);r.status=status;
- if(status==='no_failure'){delete r.reduction;delete r.repair;}
+function harness(r){
  const ids={},buttons=['original','witness','repaired','undo'].map(s=>element(s)),workbench=element();
- function element(stage){return {dataset:{stage},textContent:'',hidden:false,disabled:false,style:{},value:'0',checked:true,
+ function element(stage){return {tagName:stage?'BUTTON':'DIV',dataset:{stage},textContent:'',hidden:false,disabled:false,style:{},value:'0',checked:true,
   children:[],lastChild:{textContent:' Witness'},listeners:{},classList:{toggle(){}},setAttribute(){},replaceChildren(){this.children=[]},append(e){this.children.push(e)},
   addEventListener(name,fn){this.listeners[name]=fn},getBoundingClientRect(){return {width:500,height:300,left:0,top:0}},
   getContext(){return new Proxy({},{get:()=>()=>{},set:()=>true})},setPointerCapture(){}}}
  function get(id){return ids[id]??=Object.assign(element(),{id});}
  get('solidrift-data').textContent=JSON.stringify(r);
- const document={getElementById:get,querySelectorAll:()=>buttons,querySelector:s=>s==='.workbench'?workbench:buttons.find(b=>s.includes('"'+b.dataset.stage+'"')),createElement:()=>element()};
+ // The workbench precedes the buttons in document order and gains the same
+ // data-stage value as the active button. Model tag and attribute matching.
+ const document={getElementById:get,querySelectorAll(selector){
+  if(selector==='.workbench')return [workbench];
+  const match=/^(button)?\[data-stage(?:="([^"]+)")?\]$/.exec(selector);
+  assert.ok(match,`Unsupported test selector: ${selector}`);
+  return [workbench,...buttons].filter(el=>(!match[1]||el.tagName==='BUTTON')&&el.dataset.stage!==undefined&&(!match[2]||el.dataset.stage===match[2]));
+ },querySelector(selector){return this.querySelectorAll(selector)[0]??null;},createElement:()=>element()};
  vm.runInNewContext(source,{document,window:{addEventListener(){}},devicePixelRatio:1,console,JSON,Number,Math,Error,Set,URL,Blob,setTimeout});
+ return {ids,buttons,workbench,get};
+}
+for(const status of ['repaired','error','timeout','cancelled','running','witness','no_failure']){
+ const r=structuredClone(report);r.status=status;
+ if(status==='no_failure'){delete r.reduction;delete r.repair;}
+ const {ids,buttons}=harness(r);
  if(['repaired','witness'].includes(status)){
   assert.match(ids['case-orientation'].textContent,/union should combine both solids.*returns A and drops B/);
   assert.equal(buttons[1].lastChild.textContent.trim(),'Witness');
@@ -82,4 +93,36 @@ for(const status of ['repaired','error','timeout','cancelled','running','witness
   }
  }
 }
-console.log('PASS: 7 status controls, bounded keyboard ancestry and completed/partial geometry labels; partial stored geometry stays inspectable without enabling repair or undo.');
+async function stageImportRegressions(){
+ const failures=[];
+ for(const prior of ['undo','witness','repaired']){
+  try{
+   const {ids,buttons,workbench,get}=harness({...structuredClone(report),status:'repaired'});
+   buttons.find(b=>b.dataset.stage===prior).listeners.click();
+   assert.equal(workbench.dataset.stage,prior);
+   const tail=workbench.lastChild;
+   tail.textContent='Recorded workbench facts';
+   const partial={...structuredClone(report),status:'error'};
+   const body=JSON.stringify(partial);
+   get('file').files=[{size:Buffer.byteLength(body),text:async()=>body}];
+   await get('file').listeners.change(); // Actual asynchronous viewer import handler.
+   assert.equal(ids.error.hidden,true,'import must finish without viewer error');
+   assert.equal(workbench.dataset.stage,'original');
+   assert.equal(buttons[2].disabled,true,'Repair must be disabled after import');
+   assert.equal(buttons[3].disabled,true,'Undo must be disabled after import');
+   assert.equal(buttons[1].disabled,false,'partial geometry remains inspectable');
+   assert.equal(buttons[1].lastChild.textContent.trim(),'Partial');
+   assert.equal(workbench.lastChild,tail);
+   assert.equal(tail.textContent,'Recorded workbench facts','stage relabel must not overwrite workbench content');
+   assert.equal(workbench.disabled,false,'workbench is not a stage control');
+   assert.equal(workbench.listeners.click,undefined,'workbench must not receive a stage button handler');
+   buttons[1].listeners.click();
+   assert.equal(ids['input-title'].textContent,'Stored inputs · state 0');
+   assert.equal(ids['vertex-inspector'].hidden,false);
+   assert.equal(get('file').value,'');
+  }catch(error){failures.push(`${prior} → partial: ${error.message}`);}
+ }
+ assert.deepEqual(failures,[]);
+ console.log('PASS: 7 status/ancestry paths and async Undo/Witness/Repair → partial imports; stage selectors exclude the workbench container.');
+}
+stageImportRegressions().catch(error=>{console.error(error);process.exitCode=1;});
