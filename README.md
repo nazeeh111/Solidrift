@@ -1,6 +1,8 @@
 # Solidrift
 
-**Turn a broken mesh Boolean into a small, valid reproducer and a reversible geometry patch.**
+**Shrink a geometry failure without losing the bug.**
+
+A union should combine both solids. In the recorded Blender case, the `FLOAT` solver returns one and drops the other. Solidrift reduces 132 input triangles to a valid 12-triangle **witness**: a smaller input that keeps the same failure.
 
 [Explore the native case](https://nazeeh111.github.io/Solidrift/) · [Methods and evidence](docs/EVIDENCE.md) · [Download](https://github.com/nazeeh111/Solidrift/releases)
 
@@ -8,9 +10,7 @@
 
 [Watch the 19-second tour](https://nazeeh111.github.io/Solidrift/tour.html) of the recorded Original → Reduction → Witness → Repair → Undo investigation. The reduction sequence samples stored input states, and only stored native output surfaces are shown. The included Manifold demo operands are Apache-2.0; attribution stays on screen. [Editable tour source](tools/tour/README.md).
 
-A union operation quietly drops part of a model. Sending the original geometry is easy. Finding the geometry that actually keeps the failure alive is harder.
-
-Solidrift contracts edges while checking that both operands remain valid closed solids and the same native failure survives. It keeps each vertex's source history, searches small boundary interventions on the reduced witness, lifts them back to the full inputs, and tests the repair and undo in Blender. The result is a portable investigation, with meshes, coordinates and a 3D report a maintainer can inspect offline.
+Solidrift contracts edges while checking that both input solids (the operands) remain valid and closed, and the same native failure survives. It keeps each vertex's source history, searches small boundary interventions on the reduced witness, lifts them back to the full inputs, and tests the repair and undo in Blender. The result is a portable investigation, with meshes, coordinates and a 3D report a maintainer can inspect offline.
 
 ## Try the case
 
