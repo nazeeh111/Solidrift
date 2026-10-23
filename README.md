@@ -70,5 +70,3 @@ See [the evidence](docs/EVIDENCE.md), [architecture](docs/ARCHITECTURE.md) and [
 ## License and provenance
 
 Solidrift's implementation is MIT licensed. The included `Offset3.obj` and `Offset4.obj` fixtures are independently authored data from the [Manifold project](https://github.com/elalish/manifold), retained under Apache-2.0 with their source revision and license. See [NOTICE](NOTICE). They are regression data, not our original models.
-
-Built with Codex assistance. The repository publishes checkable implementation and evidence; automated reviews are identified as automated reviews.
