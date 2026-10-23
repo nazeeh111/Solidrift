@@ -19,7 +19,11 @@ button, input, a { -webkit-tap-highlight-color: transparent; }
 button, a, label { touch-action: manipulation; }
 button { font: inherit; cursor: pointer; }
 a { color: inherit; text-underline-offset: 4px; }
-button:focus-visible, a:focus-visible, label:focus-within, canvas:focus-visible, input:focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
+button:focus-visible, a:focus-visible, label:focus-within, canvas:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
+.vertex-inspector { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin: 16px 0; }
+.vertex-inspector[hidden] { display: none; }
+.vertex-inspector label { display: grid; gap: 6px; color: var(--muted); font: 11px var(--mono); }
+.vertex-inspector input, .vertex-inspector select { width: 100%; max-width: 190px; min-height: 38px; padding: 8px; border: 1px solid var(--line); background: var(--plate); color: var(--ink); font: 13px var(--mono); }
 header { min-height: 66px; padding: 13px 28px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .brand { display: inline-flex; align-items: center; gap: 10px; font-size: 21px; font-weight: 720; letter-spacing: -.9px; text-decoration: none; }
 .brand svg { width: 29px; fill: none; stroke: var(--teal); stroke-width: 1.7; }
@@ -34,7 +38,8 @@ main { max-width: 1480px; padding: 0 28px; margin: auto; }
 .eyebrow, .section-title { color: var(--teal); font: 10px/1.4 var(--mono); letter-spacing: 1.35px; }
 .eyebrow { margin: 0; }
 h1 { margin: 7px 0 8px; max-width: 920px; font-size: clamp(38px, 3.8vw, 58px); font-weight: 690; letter-spacing: -2.7px; line-height: 1.02; }
-.lead { margin: 0; max-width: 780px; color: var(--muted); font-size: 15px; line-height: 1.45; }
+.orientation { margin: 0 0 8px; max-width: 780px; color: var(--ink); font-size: 15px; line-height: 1.45; }
+.lead { margin: 0; max-width: 780px; color: var(--muted); font-size: 13px; line-height: 1.45; }
 h2 { margin: 12px 0 9px; font-size: clamp(23px, 2vw, 30px); letter-spacing: -.9px; line-height: 1.16; }
 h3 { margin: 0 0 12px; font-size: 17px; }
 .receipt { padding: 12px 15px 13px; border-left: 2px solid var(--teal); background: var(--surface); font-size: 12px; }
@@ -105,6 +110,7 @@ button:disabled { opacity: .48; cursor: default; }
   .intro { padding: 16px 0 15px; gap: 12px; }
   h1 { margin: 5px 0 7px; font-size: clamp(31px, 8.2vw, 46px); letter-spacing: -1.5px; }
   .lead { font-size: 12px; line-height: 1.35; }
+  .orientation { font-size: 13px; line-height: 1.4; }
   .receipt { padding: 8px 10px; }
   .receipt p { display: none; }
   .receipt .mono { display: none; }
