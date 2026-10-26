@@ -67,12 +67,15 @@ def check(vertices,faces):
     span=max((max(v[k] for v in vertices)-min(v[k] for v in vertices) for k in range(3)),default=1)
     eps=max(span*1e-9,1e-12)
     triangles=[[vertices[x] for x in f] for f in faces]
+    bounds=[[(min(v[k] for v in triangle),max(v[k] for v in triangle))
+             for k in range(3)] for triangle in triangles]
     degenerate=[i for i,t in enumerate(triangles) if norm(cross(sub(t[1],t[0]),sub(t[2],t[0])))<=eps*eps]
     intersections=[]
     for i,a in enumerate(triangles):
         for j in range(i+1,len(triangles)):
             b=triangles[j]
-            if any(max(v[k] for v in a)<min(v[k] for v in b)-eps or max(v[k] for v in b)<min(v[k] for v in a)-eps for k in range(3)):continue
+            if any(amax<bmin-eps or bmax<amin-eps
+                   for (amin,amax),(bmin,bmax) in zip(bounds[i],bounds[j])):continue
             shared=set(faces[i])&set(faces[j])
             if coplanar_strict(a,b,eps): intersections.append((i,j,'coplanar'));continue
             points=[]
