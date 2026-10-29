@@ -10,6 +10,17 @@ That command checks stored original bytes, input conversion, operand validity, a
 
 From version 0.1.2, retained output signed integrals are recomputed using exact rational arithmetic on stored coordinates and compared with serialized native volumes at relative tolerance `1e-9`, without an absolute floor. Failure tests use the recomputed values. Intermediate per-contraction output surfaces were not retained, so those steps' output-volume observations remain recorded native claims; replay independently checks their input geometry and internally consistent predicate values, not a fresh backend query. A consistent report is not authenticated evidence of who ran Blender.
 
+## Backend compatibility
+
+A fresh run on 29 October 2026 used the same fixture bytes and default query/time limits with two installed Blender builds:
+
+| Blender build | Bundled demo result | Native queries |
+|---|---|---:|
+| `5.1.2`, `ec6e62d40fa9` | Refused at baseline: MANIFOLD output fails the solid checks | 2 |
+| `5.3.0 Alpha`, `bad8871dc58d` | 132 to 12 triangles; reversible repair accepted | 395 |
+
+The 5.3 run accepted 60 contractions and completed in 69.112 seconds on this Mac. Its exported report passed stored-evidence verification, including all 60 reductions, the lifted patch and undo. Both runs preserved the original input bytes. The 5.1.2 refusal concerns this fixture pair and comparator result; it does not establish that all inputs fail on that version. Solver availability alone is insufficient, and other builds may produce different geometry. The recorded viewer and stored-report verification do not require Blender.
+
 ## Source and native run
 
 The unchanged fixtures come from [Manifold](https://github.com/elalish/manifold/tree/761661c15bacb6c8459d682c715de84591d51774/test/models), revision `761661c15bacb6c8459d682c715de84591d51774`. The upstream [OffsetSelfIntersect regression](https://github.com/elalish/manifold/blob/761661c15bacb6c8459d682c715de84591d51774/test/boolean_complex_test.cpp#L1541) combines them by union. Apache-2.0 license and source identities are included in the bundle and [NOTICE](../NOTICE).

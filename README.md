@@ -16,6 +16,8 @@ Solidrift contracts edges while checking that both input solids (the operands) r
 
 Python 3.10 or later. Blender with the `FLOAT` and `MANIFOLD` Boolean solvers. No Python dependencies, cloud service, account or model API.
 
+The bundled demo is verified on Blender `5.3.0 Alpha` (`bad8871dc58d`). A fresh Blender `5.1.2` (`ec6e62d40fa9`) run refuses it because the MANIFOLD comparison output fails the solid checks. Having both solver names does not establish compatibility. See the [backend results](docs/EVIDENCE.md#backend-compatibility). The recorded browser case needs no Blender.
+
 ```sh
 git clone https://github.com/nazeeh111/Solidrift.git
 cd Solidrift
