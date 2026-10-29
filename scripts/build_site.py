@@ -41,7 +41,7 @@ def main():
                 if path.is_file():archive.write(path, str(path.relative_to(args.case)))
         for name in ('patch.json',):
             if (args.case/name).is_file():archive.write(args.case/name,name)
-        for name in ('LICENSE','NOTICE'):
+        for name in ('LICENSE','solidrift/fixtures/LICENSE'):
             archive.write(ROOT/name,name)
         # Inline viewer carries exactly the sanitized public report and assets.
         from solidrift.cli import view

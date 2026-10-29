@@ -11,4 +11,4 @@ python3 tools/tour/make-composition.py
 
 `generate-geometry.py` replays every accepted contraction and asserts that its final vertices and faces match the stored witness. The generated assets and `composition/index.html` live in the ignored `tools/tour/composition/` directory. Open the HTML to inspect the authored frames. The published MP4 was rendered at 1280 × 720, 30 fps with Hyperframes 0.8.33. A frame from the settled witness shot is the poster and is baked into video frame zero. The exported MP4 and JPEG are committed in `docs/media/`.
 
-The video is a report-backed explanation of one recorded Blender run, not footage of a fresh native analysis or evidence for all Boolean failures. Demo operands retain Manifold's Apache-2.0 attribution in every frame; see [NOTICE](../../NOTICE).
+The video is a report-backed explanation of one recorded Blender run, not footage of a fresh native analysis or evidence for all Boolean failures. Demo operands retain Manifold's Apache-2.0 attribution in every frame; see [fixture license and provenance](../../solidrift/fixtures/LICENSE).

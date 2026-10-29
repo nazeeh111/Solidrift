@@ -8,7 +8,7 @@ version = "0.1.2"
 description = "Shrink a real Boolean failure, lift a reversible repair, and export the evidence."
 requires-python = ">=3.10"
 license = "MIT"
-license-files = ["LICENSE", "NOTICE"]
+license-files = ["LICENSE", "solidrift/fixtures/LICENSE"]
 authors = [{name = "Nazeeh Abdul-Hadi"}]
 readme = "README.md"
 dependencies = []

@@ -23,7 +23,7 @@ The 5.3 run accepted 60 contractions and completed in 69.112 seconds on this Mac
 
 ## Source and native run
 
-The unchanged fixtures come from [Manifold](https://github.com/elalish/manifold/tree/761661c15bacb6c8459d682c715de84591d51774/test/models), revision `761661c15bacb6c8459d682c715de84591d51774`. The upstream [OffsetSelfIntersect regression](https://github.com/elalish/manifold/blob/761661c15bacb6c8459d682c715de84591d51774/test/boolean_complex_test.cpp#L1541) combines them by union. Apache-2.0 license and source identities are included in the bundle and [NOTICE](../NOTICE).
+The unchanged fixtures come from [Manifold](https://github.com/elalish/manifold/tree/761661c15bacb6c8459d682c715de84591d51774/test/models), revision `761661c15bacb6c8459d682c715de84591d51774`. The upstream [OffsetSelfIntersect regression](https://github.com/elalish/manifold/blob/761661c15bacb6c8459d682c715de84591d51774/test/boolean_complex_test.cpp#L1541) combines them by union. Apache-2.0 license and source identities are included in the bundle and [fixture license and provenance](../solidrift/fixtures/LICENSE).
 
 | Input | Bytes | SHA256 |
 |---|---:|---|
