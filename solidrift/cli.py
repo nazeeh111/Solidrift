@@ -132,6 +132,50 @@ def run(args):
                       'wall_seconds':report['wall_seconds']}))
     return 0
 
+def intervention(args):
+    from .artifact import (canonical, check_artifact, from_report, operands, publish_file,
+                           result_marker, transform, write_pair)
+    if args.command=='artifact':
+        value=from_report(args.report)
+        publish_file(args.out,canonical(value)+b'\n')
+        print(json.dumps({'status':'artifact_saved','path':str(Path(args.out).absolute())}));return 0
+    artifact=check_artifact(args.report,args.artifact)
+    original=operands([args.a,args.b])
+    pair=transform(artifact,original,undo=args.command=='undo')
+    out=Path(args.out).expanduser().absolute()
+    if out.exists() or out.is_symlink():raise InputError('--out must be a new directory')
+    if args.command=='replay':
+        blender=Path(args.blender).expanduser().resolve()
+        if not blender.is_file() or not os.access(blender,os.X_OK):raise InputError('--blender must be an executable file')
+        if not 0<args.max_seconds<=120:raise InputError('--max-seconds must be >0 and <=120')
+    out.mkdir()
+    write_pair(out,pair)
+    if args.command=='replay':
+        for i,mesh in enumerate(original):write_obj(out/('original-A.obj','original-B.obj')[i],mesh)
+        request={'out':str(out),'report':str(Path(args.report).resolve()),'artifact':str(Path(args.artifact).resolve())}
+        with (out/'request.json').open('x',encoding='utf-8') as stream:json.dump(request,stream)
+        command=[str(blender),'--background','--factory-startup','--disable-autoexec','--python-exit-code','1',
+                 '--python',str(Path(__file__).resolve().parent/'replay_worker.py'),'--',str(out/'request.json')]
+        with (out/'worker.log').open('xb') as log:
+            process=subprocess.Popen(command,stdout=log,stderr=subprocess.STDOUT,start_new_session=(os.name=='posix'))
+            try:process.wait(timeout=args.max_seconds)
+            except subprocess.TimeoutExpired:
+                stop_process(process);raise InputError('Native replay timed out; partial files retained without completion marker')
+            except KeyboardInterrupt:
+                stop_process(process);raise
+        if process.returncode!=0:raise InputError('Native replay refused or failed; see worker.log; no completion marker')
+        result=json.loads((out/'native-check.json').read_text())
+        if result.get('status')!='native_checks_passed':raise InputError('Native replay did not finish successfully')
+        result['status']='native_replay_verified'
+    else:
+        result={'status':'undone' if args.command=='undo' else 'applied',
+                'artifact_sha256':artifact['sha256'],'report_sha256':artifact['report_sha256'],
+                'before_geometry_sha256':artifact['before_geometry_sha256'],
+                'after_geometry_sha256':artifact['after_geometry_sha256'],
+                'scope':'Checked source-bound geometry transformation; no fresh Blender query.'}
+    result_marker(out,result)
+    print(json.dumps({'status':result['status'],'output':str(out)}));return 0
+
 def view(args):
     report=load_report(args.report)
     target=Path(args.out)
@@ -160,8 +204,13 @@ def main(argv=None):
         p.add_argument('--max-queries',type=int,default=1500);p.add_argument('--max-seconds',type=float,default=120)
     p=sub.add_parser('view');p.add_argument('report');p.add_argument('--out',required=True)
     p=sub.add_parser('verify');p.add_argument('report')
+    p=sub.add_parser('artifact');p.add_argument('report');p.add_argument('--out',required=True)
+    for name in ('apply','undo','replay'):
+        p=sub.add_parser(name);p.add_argument('report');p.add_argument('artifact');p.add_argument('a');p.add_argument('b');p.add_argument('--out',required=True)
+        if name=='replay':p.add_argument('--blender',required=True);p.add_argument('--max-seconds',type=float,default=60)
     args=parser.parse_args(argv)
     try:
+        if args.command in ('artifact','apply','undo','replay'):return intervention(args)
         if args.command=='view':return view(args)
         if args.command=='verify':
             from .verify import verify

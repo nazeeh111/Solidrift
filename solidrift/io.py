@@ -129,9 +129,7 @@ def atomic_json(path, value):
         os.fsync(handle.fileno())
     os.replace(temporary, path)
 
-def load_report(path):
-    with Path(path).open('rb') as handle:
-        data = handle.read(MAX_REPORT_BYTES + 1)
+def parse_report(data):
     if len(data) > MAX_REPORT_BYTES:
         raise InputError('report exceeds 10 MiB limit')
     def reject(value):
@@ -140,6 +138,11 @@ def load_report(path):
     if not isinstance(result, dict) or result.get('schema_version') != 1:
         raise InputError('unsupported report schema')
     return result
+
+def load_report(path):
+    with Path(path).open('rb') as handle:
+        data = handle.read(MAX_REPORT_BYTES + 1)
+    return parse_report(data)
 
 def write_obj(path, mesh):
     lines = ['# Solidrift exported native binary32 geometry']

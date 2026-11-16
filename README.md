@@ -72,3 +72,18 @@ See [the evidence](docs/EVIDENCE.md), [architecture](docs/ARCHITECTURE.md) and [
 ## License and provenance
 
 Solidrift's implementation is MIT licensed. The included `Offset3.obj` and `Offset4.obj` fixtures are independently authored data from the [Manifold project](https://github.com/elalish/manifold), retained under Apache-2.0 with their source revision and license. See [fixture license and provenance](solidrift/fixtures/LICENSE). They are regression data, not our original models.
+
+### Save and replay a checked intervention
+
+For a completed `repaired` report, bind its verified stored evidence to a portable intervention and apply it to the same normalized binary32 geometry:
+
+```sh
+solidrift artifact output/report.json --out intervention.json
+solidrift apply output/report.json intervention.json output/originals/A.obj output/originals/B.obj --out applied
+solidrift undo output/report.json intervention.json applied/A.obj applied/B.obj --out undone
+solidrift replay output/report.json intervention.json output/originals/A.obj output/originals/B.obj --blender /path/to/Blender --out fresh-replay
+```
+
+All output paths must be new. `apply` and `undo` check the source-bound report, exact indexed geometry and per-vertex preconditions; they do not launch Blender. `replay` separately checks the recorded Blender version/build and reruns the original failure, full repaired FLOAT/MANIFOLD comparison and actual undo failure. Each completed directory has `result.json`; failed or interrupted runs can leave partial files without that marker. Reuse a fresh path. The hashes bind recorded bytes and code, not authorship; source and report directories must remain stable during use. Agreement with an independent solver is not a proof of the true union, and this remains a bounded failure family and intervention search.
+
+Report and intervention paths may be symlinks to regular files. Admission opens the target without blocking on special files, checks the opened descriptor is regular, and enforces the byte limit while reading. Keep input parent directories stable during use; this is not a hostile filesystem sandbox.
