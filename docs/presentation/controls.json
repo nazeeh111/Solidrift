@@ -1,0 +1,10 @@
+{
+  "current_main": "66bf422806891121d1fed7e5f08e7fa8aa89d3df",
+  "existing_output_refusal_exit": 2,
+  "existing_report_byte_identity_preserved": true,
+  "healthy_case_status": "no_failure",
+  "healthy_case_queries": 2,
+  "invalid_query_budget_refused_before_output": true,
+  "invalid_query_exit": 2,
+  "scope": "Task-owned fixtures only, no general Boolean correctness claim"
+}

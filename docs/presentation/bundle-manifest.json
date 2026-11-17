@@ -1,0 +1,356 @@
+{
+  "source_revision": "66bf422806891121d1fed7e5f08e7fa8aa89d3df",
+  "scope": "Public Manifold fixtures, executed native evidence, exact current Solidrift replay source, native inspection and source-derived figures",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 6687,
+      "sha256": "e988e31f2733fbb32927a5e6433ea9ee6c5ff23a3a16e3ded86542dbb843998d"
+    },
+    {
+      "path": "case/baseline.json",
+      "bytes": 46078,
+      "sha256": "7c3a3d367eebb3a134a57e8c2ffc6b428d814a9c1cc901d09e2a130209b14f30"
+    },
+    {
+      "path": "case/favicon.svg",
+      "bytes": 214,
+      "sha256": "124f4fbc3745bbdd687fe1b2722e33aeeaf802917580d158ac876f018e2cf0fb"
+    },
+    {
+      "path": "case/meshes/baseline-FLOAT.obj",
+      "bytes": 3394,
+      "sha256": "2a4b7ef820ce169e20c4501b21a6fb60f347f83a8230f94d3a8e47be80602701"
+    },
+    {
+      "path": "case/meshes/baseline-MANIFOLD.obj",
+      "bytes": 5249,
+      "sha256": "cd17d4710cff09676c609cab675d5ab6b533566c6ec1f87c73b19560dc2003fb"
+    },
+    {
+      "path": "case/meshes/full_check-FLOAT.obj",
+      "bytes": 6340,
+      "sha256": "20fea680a7455c73273ff68bfd6e8c38baa09e8f07d7741801f33afd49ae021c"
+    },
+    {
+      "path": "case/meshes/full_check-MANIFOLD.obj",
+      "bytes": 6337,
+      "sha256": "a04ea1a8be9d08ec603cd662b1e40d0dd59a8f3966458748a06574885ae7288d"
+    },
+    {
+      "path": "case/meshes/full_repaired-A.obj",
+      "bytes": 2004,
+      "sha256": "48613cd7ce53a9343106845b34032fbf8e62b478bebfc9fe2f5bb93fa672b35b"
+    },
+    {
+      "path": "case/meshes/full_repaired-B.obj",
+      "bytes": 2638,
+      "sha256": "f343010f9a7c555dda5830f4870b92d94cffb1b7266911fe256e30f803febac8"
+    },
+    {
+      "path": "case/meshes/original-A.obj",
+      "bytes": 2005,
+      "sha256": "9b535d4ed9e17a168f2688784e12a3d3be1e33fe6742fbeeed066883b15aa16f"
+    },
+    {
+      "path": "case/meshes/original-B.obj",
+      "bytes": 2638,
+      "sha256": "f343010f9a7c555dda5830f4870b92d94cffb1b7266911fe256e30f803febac8"
+    },
+    {
+      "path": "case/meshes/undo_inputs-A.obj",
+      "bytes": 2005,
+      "sha256": "9b535d4ed9e17a168f2688784e12a3d3be1e33fe6742fbeeed066883b15aa16f"
+    },
+    {
+      "path": "case/meshes/undo_inputs-B.obj",
+      "bytes": 2638,
+      "sha256": "f343010f9a7c555dda5830f4870b92d94cffb1b7266911fe256e30f803febac8"
+    },
+    {
+      "path": "case/meshes/witness-A.obj",
+      "bytes": 326,
+      "sha256": "ad8136ca63cd1c2cc5607fe93da17a5abec1f92d18b45f22399a880463e27d28"
+    },
+    {
+      "path": "case/meshes/witness-B.obj",
+      "bytes": 323,
+      "sha256": "a5dbc37c95488e7928f33298aed6012493d035b0ff94b383817d64e3f7636308"
+    },
+    {
+      "path": "case/meshes/witness-FLOAT.obj",
+      "bytes": 1308,
+      "sha256": "d98680d299301c45a6375bb11f7eaffcb2f2a16c12e5b0c64f609a4d2dacde4a"
+    },
+    {
+      "path": "case/meshes/witness-MANIFOLD.obj",
+      "bytes": 1216,
+      "sha256": "afd5d279da03277c297b81211a0a109065b29e71321c7be57a28ad584d2a61c8"
+    },
+    {
+      "path": "case/meshes/witness_check-FLOAT.obj",
+      "bytes": 1753,
+      "sha256": "695c1b08f809350cff3dd9a21aea43e9cfa99f8f588853df9f542b807e3bfe60"
+    },
+    {
+      "path": "case/meshes/witness_check-MANIFOLD.obj",
+      "bytes": 1769,
+      "sha256": "c37068933e390db4870cdd83ad85b5e932fcd92aa0059b18d5bd0e144370f31b"
+    },
+    {
+      "path": "case/meshes/witness_repaired-A.obj",
+      "bytes": 322,
+      "sha256": "72255daf8e609ffd48333dddcb8c7c01ac3c4f39358e4e902d3d8401ea31e92c"
+    },
+    {
+      "path": "case/meshes/witness_repaired-B.obj",
+      "bytes": 323,
+      "sha256": "a5dbc37c95488e7928f33298aed6012493d035b0ff94b383817d64e3f7636308"
+    },
+    {
+      "path": "case/originals/A.obj",
+      "bytes": 2242,
+      "sha256": "ca13ac6d4154725116886999d576ce22c164e55a3fccb645ef71e17b0871e8a6"
+    },
+    {
+      "path": "case/originals/B.obj",
+      "bytes": 2760,
+      "sha256": "c894fd2ca43a8cc0ce259cc2473c7062efc59dd7217603a91c1b7d897e0264c3"
+    },
+    {
+      "path": "case/originals/FIXTURE_LICENSE",
+      "bytes": 11975,
+      "sha256": "779fefa85ea9796da4fdab52b766b0c4c3001425c526dd490b170bd7c3565cee"
+    },
+    {
+      "path": "case/patch.json",
+      "bytes": 3188,
+      "sha256": "3336954fcd3f64b1d8b6fc3c34e87b38582f7b09cb38041443364b132afdb22a"
+    },
+    {
+      "path": "case/reduction.json",
+      "bytes": 148406,
+      "sha256": "d03f184a6806dcf69956eef6e8e4126ff10c6d256c770353435c4e3a868a75c9"
+    },
+    {
+      "path": "case/repair.json",
+      "bytes": 159529,
+      "sha256": "7898a586814f8fbe05dc1b15a6dde1b4445bdacbcf56b412bdb57a9ef2e47e6c"
+    },
+    {
+      "path": "case/report.html",
+      "bytes": 204160,
+      "sha256": "375432d1a70304f0a994b86e4c89baab9d467bb9244ac9ff9d9055d87d9f9772"
+    },
+    {
+      "path": "case/report.json",
+      "bytes": 396107,
+      "sha256": "b125b139a21096cfa323ee0f164c540f1296980d65ab7af7da7c5e85c43cfd73"
+    },
+    {
+      "path": "case/request.json",
+      "bytes": 1633,
+      "sha256": "c9605944370193c72e4583b14e821f08a9a262a5268ded574bcdcc8bf1be568e"
+    },
+    {
+      "path": "case/worker.log",
+      "bytes": 161,
+      "sha256": "91007642fdd6b0b8e0f99642db0c84dac6312ef78080578c4e0e9d6f4f87065f"
+    },
+    {
+      "path": "controls.json",
+      "bytes": 379,
+      "sha256": "f8e91169ea636a229bb91a3ce47a2a029b31153244bfbe16927501fe737e861d"
+    },
+    {
+      "path": "figure-manifest.json",
+      "bytes": 2630,
+      "sha256": "249f567919d139444a1ed3a5c20754a644f3c4c65ca2a8d88408d5fd311d858f"
+    },
+    {
+      "path": "native/inspection.blend",
+      "bytes": 103019,
+      "sha256": "7507d228b2367c5752bb35297d1c21bcc98a3cbc81a8f24966ba2a1c2e464edf"
+    },
+    {
+      "path": "native/native-inspection.png",
+      "bytes": 920530,
+      "sha256": "86442d5c0bba226cba32c53408984ccf4da30bbdd84735ea91deb85d487f75b8"
+    },
+    {
+      "path": "native/native.json",
+      "bytes": 839,
+      "sha256": "6ed26762131ff65066b79ca1eb17cbf7fe095b9c1c76354599452a3777ab5021"
+    },
+    {
+      "path": "native/reopened.json",
+      "bytes": 1107,
+      "sha256": "c300249c410b9cdcea2070acb27365b8f75ba34ed73f05080a8d432810b7e3a5"
+    },
+    {
+      "path": "native/witness-A.obj",
+      "bytes": 326,
+      "sha256": "ad8136ca63cd1c2cc5607fe93da17a5abec1f92d18b45f22399a880463e27d28"
+    },
+    {
+      "path": "native/witness-B.obj",
+      "bytes": 323,
+      "sha256": "a5dbc37c95488e7928f33298aed6012493d035b0ff94b383817d64e3f7636308"
+    },
+    {
+      "path": "native-scene.py",
+      "bytes": 5805,
+      "sha256": "ac45cd79cbec62285b44bc232c452d9e7b3b1fa38a6ffe6dd205765cbc0723b3"
+    },
+    {
+      "path": "projection.json",
+      "bytes": 324271,
+      "sha256": "de36f13ef3eaec4adefb91c674e767929a1d74f7e07bb6a0a1ea2278bd98a3c2"
+    },
+    {
+      "path": "reader-source/LICENSE",
+      "bytes": 1074,
+      "sha256": "ab0ce13cd5b12cd01185876ef0c286fedd048342b6460f36bc4e9c7ee21d999a"
+    },
+    {
+      "path": "reader-source/pyproject.toml",
+      "bytes": 604,
+      "sha256": "ca19eb583036dd285bf2b1c101a14151defc68535eca916bdae90d229dadf8c6"
+    },
+    {
+      "path": "reader-source/solidrift/__init__.py",
+      "bytes": 91,
+      "sha256": "6f07b4fd6cd1c46d6862e145fa763004eb4907cb1bff9693d594bb25c811295f"
+    },
+    {
+      "path": "reader-source/solidrift/__main__.py",
+      "bytes": 47,
+      "sha256": "79ee6f134c5c5193377cf9b189cbdcc3e2095e49ba9cec310114441c15a917c4"
+    },
+    {
+      "path": "reader-source/solidrift/cli.py",
+      "bytes": 9264,
+      "sha256": "af2c68b7137f5ca1910f273e3c97b95b33a59ca4532d760886e233d40b2b6e14"
+    },
+    {
+      "path": "reader-source/solidrift/engine.py",
+      "bytes": 14868,
+      "sha256": "25cff7fa134e49396f4e4419cf0738b7b2b40adb961a541d230047f9f36ddd31"
+    },
+    {
+      "path": "reader-source/solidrift/fixtures/LICENSE",
+      "bytes": 11975,
+      "sha256": "779fefa85ea9796da4fdab52b766b0c4c3001425c526dd490b170bd7c3565cee"
+    },
+    {
+      "path": "reader-source/solidrift/fixtures/Offset3.obj",
+      "bytes": 2242,
+      "sha256": "ca13ac6d4154725116886999d576ce22c164e55a3fccb645ef71e17b0871e8a6"
+    },
+    {
+      "path": "reader-source/solidrift/fixtures/Offset4.obj",
+      "bytes": 2760,
+      "sha256": "c894fd2ca43a8cc0ce259cc2473c7062efc59dd7217603a91c1b7d897e0264c3"
+    },
+    {
+      "path": "reader-source/solidrift/gate.py",
+      "bytes": 369,
+      "sha256": "1b2ee7806063f3280698ce60ad3678536d287babc288fec9e7df0ab4cf48abe1"
+    },
+    {
+      "path": "reader-source/solidrift/guard.py",
+      "bytes": 7815,
+      "sha256": "46747898087b4bb99132017b17753fa25dd2a3783d3d56f09e5705635e7d46ca"
+    },
+    {
+      "path": "reader-source/solidrift/io.py",
+      "bytes": 6486,
+      "sha256": "a73f4624b40fc9541f62974058cfd9bd7658c9d4d2339219025371e8121647e6"
+    },
+    {
+      "path": "reader-source/solidrift/native.py",
+      "bytes": 2326,
+      "sha256": "b53dbf11908ca5992e4cbab260aadcb996a4eeefda9c5ceabc3a7df256eb77d0"
+    },
+    {
+      "path": "reader-source/solidrift/numeric.py",
+      "bytes": 5263,
+      "sha256": "ea03a802db80345bdee4ff1681f37f87bb298a40c5120dfd9fc3129c4bf46553"
+    },
+    {
+      "path": "reader-source/solidrift/reducer.py",
+      "bytes": 7658,
+      "sha256": "597a07814b906c3c66f4fe7c6521d51d500423fd2a27181d64a6996e167eefd8"
+    },
+    {
+      "path": "reader-source/solidrift/surface.py",
+      "bytes": 1986,
+      "sha256": "4934b89c44d7b19eadceb9e190e1b3d21b2df694e722a29c273fd15332baed09"
+    },
+    {
+      "path": "reader-source/solidrift/verify.py",
+      "bytes": 12562,
+      "sha256": "9e259b26d2f7351ee9222ab20d7dd218e51e91d3b31791bfa95ffb0494425c82"
+    },
+    {
+      "path": "reader-source/solidrift/web/app.js",
+      "bytes": 22167,
+      "sha256": "d94ca01b575724baf1662385c217c866b6d3a0331e6f7e472975f2368651c825"
+    },
+    {
+      "path": "reader-source/solidrift/web/index.html",
+      "bytes": 6215,
+      "sha256": "9cabee7b444d460169a1a2cef488709261e3d2ae3e1becb5cd27246e8560c422"
+    },
+    {
+      "path": "reader-source/solidrift/web/style.css",
+      "bytes": 10648,
+      "sha256": "fbb7d8d7ac9435bb08a1f180cc9314f8700b67d2b24026623ce382a039665298"
+    },
+    {
+      "path": "reader-source/solidrift/worker.py",
+      "bytes": 1757,
+      "sha256": "c13d737f01e0f18a04f76dd0500aa6138a0a75b9fc7cdc6a5eac8e86284b6f95"
+    },
+    {
+      "path": "render.py",
+      "bytes": 5835,
+      "sha256": "0bb9fa4f779863936070e37782e57a9a8325671c0034a2bf453a81049690cac0"
+    },
+    {
+      "path": "reopen.py",
+      "bytes": 670,
+      "sha256": "b01d83ac7233b587dad75ae1875894aa04bc13e229848890dbb5faf79ecc1a13"
+    },
+    {
+      "path": "witness-mobile.html",
+      "bytes": 83199,
+      "sha256": "1fa5d93f014ba78e23afe990ea37cd5eed9ce83229cfe69ab7bc86316f3141ce"
+    },
+    {
+      "path": "witness-mobile.png",
+      "bytes": 124825,
+      "sha256": "d02787a717cf9616aef07ea984c9c7de234b9053baa21a81f4f0db13e9c12a0b"
+    },
+    {
+      "path": "witness-mobile.svg",
+      "bytes": 82899,
+      "sha256": "f651491c4a64cf07c9bd3b51039e86212daa2d6b21582a9b9bfff359abf5a746"
+    },
+    {
+      "path": "witness.html",
+      "bytes": 83144,
+      "sha256": "2e371b2bf105c4091a3fd8a99964091d6890efcd622ee85a6c1f1b2a1b06df15"
+    },
+    {
+      "path": "witness.png",
+      "bytes": 174123,
+      "sha256": "514367852b83b8de878a723061f2e0f37ecce5502caec2f83e7a083b9f8b2eeb"
+    },
+    {
+      "path": "witness.svg",
+      "bytes": 82843,
+      "sha256": "43e9d6fb930c48ec65626e7c5a9631261e6b6ddbef7dbae84d1dbf732c4517aa"
+    }
+  ]
+}

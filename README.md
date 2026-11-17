@@ -2,15 +2,26 @@
 
 **Shrink a geometry failure without losing the bug.**
 
-A union should combine both solids. In the recorded Blender case, the `FLOAT` solver returns one and drops the other. Solidrift reduces 132 input triangles to a valid 12-triangle **witness**: a smaller input that keeps the same failure.
+A Boolean union should combine both input solids. On this Manifold regression case, Blender's `FLOAT` solver drops the second region. Solidrift reduces the inputs while retaining that omission, then lifts a small, reversible geometry intervention back to the full model.
 
-[Explore the native case](https://nazeeh111.github.io/Solidrift/) · [Methods and evidence](docs/EVIDENCE.md) · [Download](https://github.com/nazeeh111/Solidrift/releases)
+[Try the native case](#try-the-case) · [Open the fresh investigation and reader guide](docs/presentation/README.md) · [Download the native example](docs/presentation/solidrift-native-reader.zip)
 
-[![Watch the 19-second Solidrift geometry tour](docs/media/solidrift-tour.jpg)](https://nazeeh111.github.io/Solidrift/tour.html)
+<picture>
+  <source media="(max-width: 600px)" srcset="docs/presentation/witness-mobile.png">
+  <img src="docs/presentation/witness.png" alt="Four equal-scale orthographic projections show the 132-triangle original inputs and FLOAT omission, then the 12-triangle reduced witness and the same omission. Yellow wire shows the MANIFOLD comparator, not a proof of the ideal union.">
+</picture>
 
-[Watch the 19-second tour](https://nazeeh111.github.io/Solidrift/tour.html) of the recorded Original → Reduction → Witness → Repair → Undo investigation. The reduction sequence samples stored input states, and only stored native output surfaces are shown. The included Manifold demo operands are Apache-2.0; attribution stays on screen. [Editable tour source](tools/tour/README.md).
+## A failure a maintainer can carry
 
-Solidrift contracts edges while checking that both input solids (the operands) remain valid and closed, and the same native failure survives. It keeps each vertex's source history, searches small boundary interventions on the reduced witness, lifts them back to the full inputs, and tests the repair and undo in Blender. The result is a portable investigation, with meshes, coordinates and a 3D report a maintainer can inspect offline.
+A fresh **Blender 5.2.1 LTS** run, build **`9e2066aef7ef`**, made 395 native Boolean queries. It accepted 60 contractions, taking **132 triangles to 12**, with both operands remaining valid closed solids under Solidrift's conservative stored-number guard. This is one bounded greedy result, not a globally smallest witness.
+
+The accepted intervention moves three witness vertices whose ancestry covers thirteen original vertices in operand A. Operand B and every face index stay unchanged. The repaired `FLOAT` and `MANIFOLD` outputs have matching oriented triangles, with paired surface separation bounded by **4.272e−6 model units**. Undo restores the original input coordinates exactly and reproduces the omission. This changes the input geometry; it does not fix Blender's implementation or prove the ideal union.
+
+The [native `.blend`](docs/presentation/native/inspection.blend), [editable native script](docs/presentation/native-scene.py), [full report](docs/presentation/case/report.json), [OBJ exports](docs/presentation/case/meshes/witness-A.obj) and [offline viewer](docs/presentation/case/report.html) travel with the example. A second Blender process reopened the scene and OBJ pair, checked all eight displayed mesh data blocks, and repeated the four decisive `FLOAT` queries: original failure, witness failure, accepted repair and restored failure. Read the [guide](docs/presentation/README.md) for exact version, units, display offsets and verification boundaries.
+
+The two input meshes are Manifold's Apache-2.0 regression data, not our original models. Solidrift supplies the reducer, ancestry lift, bounded intervention search, conservative geometry checks and portable inspection workflow. Blender supplies the Boolean implementations; MANIFOLD is a comparator, not ground truth.
+
+The original [19-second geometry tour](https://nazeeh111.github.io/Solidrift/tour.html), [poster](docs/media/solidrift-tour.jpg) and [editable tour source](tools/tour/README.md) remain available. That recorded Original → Reduction → Witness → Repair → Undo investigation samples stored input states and shows only stored native output surfaces. The browser viewer never runs Blender.
 
 ## Try the case
 

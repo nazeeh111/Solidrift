@@ -1,0 +1,2 @@
+# Preserve the exact exported evidence, native files and reader hashes.
+docs/presentation/** -text -eol
