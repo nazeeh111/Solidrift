@@ -85,8 +85,8 @@ def bind_signature(stored,inputs,output):
     require(declared['matches']==actual['matches'],'stored failure verdict differs from recomputed geometry')
     return actual
 
-def verify(path):
-    path=Path(path);r=load_report(path)
+def verify(path, *, report=None):
+    path=Path(path);r=load_report(path) if report is None else report
     require(r.get('status') in ('repaired','witness','no_failure'),'report is not a successful completed analysis')
     sources=r.get('sources',[])
     require(len(sources)==2,'expected exactly two preserved sources')
