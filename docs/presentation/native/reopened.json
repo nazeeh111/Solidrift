@@ -1,0 +1,35 @@
+{
+  "blender": "5.2.1 LTS",
+  "build_hash": "9e2066aef7ef",
+  "mesh_objects": 8,
+  "native_queries": 4,
+  "checks": [
+    {
+      "stage": "original",
+      "FLOAT_recomputed_geometry_matches_record": true,
+      "comparison": "coordinate-exact oriented triangle multiset",
+      "failure_matches": true
+    },
+    {
+      "stage": "witness",
+      "FLOAT_recomputed_geometry_matches_record": true,
+      "comparison": "coordinate-exact oriented triangle multiset",
+      "failure_matches": true
+    },
+    {
+      "stage": "repair",
+      "FLOAT_recomputed_geometry_matches_record": true,
+      "comparison": "coordinate-exact oriented triangle multiset",
+      "failure_matches": false
+    },
+    {
+      "stage": "undo",
+      "FLOAT_recomputed_geometry_matches_record": true,
+      "comparison": "coordinate-exact oriented triangle multiset",
+      "failure_matches": true
+    }
+  ],
+  "input_undo_exact": true,
+  "units": "abstract model units; scene display offsets recorded per object",
+  "scope": "Exact retained geometry repeat on this build; no universal union correctness or global minimality"
+}

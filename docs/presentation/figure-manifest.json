@@ -1,0 +1,82 @@
+{
+  "source_revision": "66bf422806891121d1fed7e5f08e7fa8aa89d3df",
+  "native_blender": "5.2.1 LTS /9e2066aef7ef",
+  "png_methods": {
+    "witness": "Actual Chrome renders of source-derived SVG projections",
+    "native-inspection": "Actual Blender Workbench native render"
+  },
+  "font": "Arial verified on all42 SVG text nodes",
+  "geometry": "All native vertices/faces retained; orthonormal source-derived projection with equal model-unit scales within each composition",
+  "files": [
+    {
+      "path": "render.py",
+      "bytes": 5835,
+      "sha256": "0bb9fa4f779863936070e37782e57a9a8325671c0034a2bf453a81049690cac0"
+    },
+    {
+      "path": "projection.json",
+      "bytes": 324271,
+      "sha256": "de36f13ef3eaec4adefb91c674e767929a1d74f7e07bb6a0a1ea2278bd98a3c2"
+    },
+    {
+      "path": "case/report.json",
+      "bytes": 396107,
+      "sha256": "b125b139a21096cfa323ee0f164c540f1296980d65ab7af7da7c5e85c43cfd73"
+    },
+    {
+      "path": "witness.svg",
+      "bytes": 82843,
+      "sha256": "43e9d6fb930c48ec65626e7c5a9631261e6b6ddbef7dbae84d1dbf732c4517aa"
+    },
+    {
+      "path": "witness-mobile.svg",
+      "bytes": 82899,
+      "sha256": "f651491c4a64cf07c9bd3b51039e86212daa2d6b21582a9b9bfff359abf5a746"
+    },
+    {
+      "path": "witness.png",
+      "bytes": 174123,
+      "sha256": "514367852b83b8de878a723061f2e0f37ecce5502caec2f83e7a083b9f8b2eeb"
+    },
+    {
+      "path": "witness-mobile.png",
+      "bytes": 124825,
+      "sha256": "d02787a717cf9616aef07ea984c9c7de234b9053baa21a81f4f0db13e9c12a0b"
+    },
+    {
+      "path": "witness.html",
+      "bytes": 83144,
+      "sha256": "2e371b2bf105c4091a3fd8a99964091d6890efcd622ee85a6c1f1b2a1b06df15"
+    },
+    {
+      "path": "witness-mobile.html",
+      "bytes": 83199,
+      "sha256": "1fa5d93f014ba78e23afe990ea37cd5eed9ce83229cfe69ab7bc86316f3141ce"
+    },
+    {
+      "path": "native/native-inspection.png",
+      "bytes": 920530,
+      "sha256": "86442d5c0bba226cba32c53408984ccf4da30bbdd84735ea91deb85d487f75b8"
+    },
+    {
+      "path": "native/inspection.blend",
+      "bytes": 103019,
+      "sha256": "7507d228b2367c5752bb35297d1c21bcc98a3cbc81a8f24966ba2a1c2e464edf"
+    },
+    {
+      "path": "native/native.json",
+      "bytes": 839,
+      "sha256": "6ed26762131ff65066b79ca1eb17cbf7fe095b9c1c76354599452a3777ab5021"
+    },
+    {
+      "path": "native/reopened.json",
+      "bytes": 1107,
+      "sha256": "c300249c410b9cdcea2070acb27365b8f75ba34ed73f05080a8d432810b7e3a5"
+    },
+    {
+      "path": "native-scene.py",
+      "bytes": 5805,
+      "sha256": "ac45cd79cbec62285b44bc232c452d9e7b3b1fa38a6ffe6dd205765cbc0723b3"
+    }
+  ]
+}

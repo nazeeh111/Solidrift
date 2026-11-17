@@ -1,0 +1,48 @@
+{
+  "sources": [
+    {
+      "name": "Offset3.obj",
+      "bytes": 2242,
+      "sha256": "ca13ac6d4154725116886999d576ce22c164e55a3fccb645ef71e17b0871e8a6",
+      "conversion": {
+        "interpretation": "decimal text -> Python binary64 -> Blender binary32",
+        "changed_coordinate_count": 70,
+        "max_absolute_coordinate_delta": 1.7957243940713852e-06,
+        "vertex_and_triangle_order_preserved": true
+      },
+      "stored_path": "originals/A.obj",
+      "provenance": {
+        "repository": "https://github.com/elalish/manifold",
+        "commit": "761661c15bacb6c8459d682c715de84591d51774",
+        "paths": [
+          "test/models/Offset3.obj",
+          "test/models/Offset4.obj"
+        ],
+        "license": "Apache-2.0; included in originals/FIXTURE_LICENSE"
+      }
+    },
+    {
+      "name": "Offset4.obj",
+      "bytes": 2760,
+      "sha256": "c894fd2ca43a8cc0ce259cc2473c7062efc59dd7217603a91c1b7d897e0264c3",
+      "conversion": {
+        "interpretation": "decimal text -> Python binary64 -> Blender binary32",
+        "changed_coordinate_count": 78,
+        "max_absolute_coordinate_delta": 1.7957243940713852e-06,
+        "vertex_and_triangle_order_preserved": true
+      },
+      "stored_path": "originals/B.obj",
+      "provenance": {
+        "repository": "https://github.com/elalish/manifold",
+        "commit": "761661c15bacb6c8459d682c715de84591d51774",
+        "paths": [
+          "test/models/Offset3.obj",
+          "test/models/Offset4.obj"
+        ],
+        "license": "Apache-2.0; included in originals/FIXTURE_LICENSE"
+      }
+    }
+  ],
+  "max_queries": 1500,
+  "max_seconds": 118
+}
