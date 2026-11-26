@@ -4,7 +4,7 @@
 
 A Boolean union should combine both input solids. On this Manifold regression case, Blender's `FLOAT` solver drops the second region. Solidrift reduces the inputs while retaining that omission, then lifts a small, reversible geometry intervention back to the full model.
 
-[Try the native case](#try-the-case) · [Open the fresh investigation and reader guide](docs/presentation/README.md) · [Download the native example](docs/presentation/solidrift-native-reader.zip)
+[Try the native case](#try-the-case) · [Open the fresh investigation and reader guide](docs/presentation/README.md) · [Download the native example](https://raw.githubusercontent.com/nazeeh111/Solidrift/759241488e51110d11a94b05a8aca7681bee833a/docs/presentation/solidrift-native-reader.zip)
 
 <picture>
   <source media="(max-width: 600px)" srcset="docs/presentation/witness-mobile.png">
